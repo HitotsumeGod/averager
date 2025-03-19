@@ -9,7 +9,8 @@ int main(int argc, char *argv[]) {
 
 	FILE *fptr;
 	unsigned long numlines, res;
-	int *numarr, count, c;
+	int count, c, med, quod;
+	float *numarr, q1, q2, q3;
 	char *buf;
 	if (argc != 2) {
 		printf("%s\n", "Improper format. Please launch the applicaton with a single argument (the filename of the file to be read from). Example : \"averager.exe myfile.txt\".");
@@ -31,15 +32,28 @@ int main(int argc, char *argv[]) {
 	}		
 	count = 0;
 	while (fgets(buf, BUFLEN, fptr) != NULL) {
-		*(numarr + count) = atoi(buf);
+		*(numarr + count) = atof(buf);
 		count++;
 	}
-	qsort(numarr, count, sizeof(int), compa);
-	res = 0;
+	qsort(numarr, count, sizeof(float), compa);
+	quod = res = 0;
 	int i;
 	for (i = 0; i < numlines; i++) 
 		res += *(numarr + i);
-	printf("Median is %lu\n1st Quartile is %lu\n2nd Quartile is %lu\n", *(numarr + ((numlines + 1) * 2/4)), *(numarr + ((numlines + 1) * 1/4)), *(numarr + ((numlines + 1) * 3/4)));
+	med = numlines / 2;
+	if (numlines % 2 == 0) {
+		if (med % 2 == 0)
+			--quod;
+		printf("%d\n", quod);
+		q1 = *(numarr + ((med + 1 + quod) / 2) - 1);
+		q2 = (*(numarr + med - 1) + *(numarr + med)) / 2;
+		q3 = *(numarr + ((med - 1) + ((med + 1 + quod) / 2)));
+	} else {
+		q1 = *(numarr + ((med / 2) + (med / 2 + 1) / 2));
+		q2 = *(numarr + med);
+		//q3 = *(numarr + ((numarr + med) + (numarr + ((med / 2) + (med / 2 + 1) / 2))));
+	}
+	printf("1st Quartile is : %.2f\nMedian is : %.2f\n3rd Quartile is : %.2f\n", q1, q2, q3);
 	if (fclose(fptr) == -1) {
 		perror("fclose err");
 		exit(EXIT_FAILURE);
@@ -52,6 +66,6 @@ int main(int argc, char *argv[]) {
 
 int compa(const void *a, const void *b) {
 
-	return *((int *) a) - *((int *) b);
+	return *(int *) a - *(int *) b;
 
 }
