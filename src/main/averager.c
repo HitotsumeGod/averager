@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
 
 	FILE *fptr;
 	unsigned long numlines, res;
-	int count, c, med, quod;
+	int count, c, med;
 	float *numarr, q1, q2, q3;
 	char *buf;
 	if (argc != 2) {
@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 	numlines = count;
 	rewind(fptr);
 	if ((buf = malloc(sizeof(char) * BUFLEN)) == NULL || (numarr = malloc(sizeof(int) * numlines)) == NULL) {
-		perror("malloc err");
+		printf("%s\n", "Memory allocation error. Immediately report to Peter.");
 		exit(EXIT_FAILURE);
 	}		
 	count = 0;
@@ -36,26 +36,30 @@ int main(int argc, char *argv[]) {
 		count++;
 	}
 	qsort(numarr, count, sizeof(float), compa);
-	quod = res = 0;
+	res = 0;
 	int i;
 	for (i = 0; i < numlines; i++) 
 		res += *(numarr + i);
 	med = numlines / 2;
 	if (numlines % 2 == 0) {
-		if (med % 2 == 0)
-			--quod;
-		printf("%d\n", quod);
-		q1 = *(numarr + ((med + 1 + quod) / 2) - 1);
-		q2 = (*(numarr + med - 1) + *(numarr + med)) / 2;
-		q3 = *(numarr + ((med - 1) + ((med + 1 + quod) / 2)));
+		if (med % 2 == 0) {
+			q1 = (*(numarr + (med / 2 - 1)) + *(numarr + (med / 2))) / 2;
+			q2 = (*(numarr + med - 1) + *(numarr + med)) / 2;
+			q3 = (*(numarr + ((med / 2 - 1) + med)) + *(numarr + ((med / 2) + med))) / 2;
+		} else {
+			q1 = *(numarr + ((med + 1) / 2) - 1);
+			q2 = (*(numarr + med - 1) + *(numarr + med)) / 2;
+			q3 = *(numarr + ((((med + 1) / 2) + med) - 1));
+		}
 	} else {
-		q1 = *(numarr + ((med / 2) + (med / 2 + 1) / 2));
-		q2 = *(numarr + med);
-		//q3 = *(numarr + ((numarr + med) + (numarr + ((med / 2) + (med / 2 + 1) / 2))));
+		printf("%s\n", "This program only accepts datasets of even length right now (total number of numbers must be cleanly divisible by 2)! Please remove a SINGLE item from the dataset and try it again.");
+		free(buf);
+		free(numarr);
+		exit(EXIT_FAILURE);
 	}
 	printf("1st Quartile is : %.2f\nMedian is : %.2f\n3rd Quartile is : %.2f\n", q1, q2, q3);
 	if (fclose(fptr) == -1) {
-		perror("fclose err");
+		printf("%s\n", "File close error. Report to Peter immediately.");
 		exit(EXIT_FAILURE);
 	}
 	free(buf);

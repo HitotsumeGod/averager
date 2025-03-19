@@ -4,7 +4,7 @@ SRC=src/main
 DEPS=src/headers
 BUILD=build
 
-$(BUILD)/averager.exe: $(SRC)/averager.c $(BUILD)
+$(BUILD)/evilquartiles.exe: $(SRC)/averager.c $(BUILD)
 	$(CC) -o $@ $< -I $(DEPS) 
 debug: $(SRC)/averager.c $(BUILD)
 	$(CC) -o $(BUILD)/averager.exe $< -I $(DEPS) -g
