@@ -6,8 +6,8 @@
 int main(int argc, char *argv[]) {
 
 	FILE *fptr;
-	long fsize;
-	int *numarr, count;
+	unsigned long numlines, res;
+	int *numarr, count, c;
 	char *buf;
 	if (argc != 2) {
 		printf("%s\n", "Improper format. Please launch the applicaton with a single argument (the filename of the file to be read from). Example : \"averager.exe myfile.txt\".");
@@ -17,32 +17,27 @@ int main(int argc, char *argv[]) {
 		printf("%s\n", "File not found. Please provide the file in the same directory as this program and then provide the filename.");
 		exit(EXIT_FAILURE);
 	}
-	if (fseek(fptr, 0, SEEK_END) == -1) {
-		perror("fseek err");
-		exit(EXIT_FAILURE);
-	}
-	if ((fsize = ftell(fptr)) == -1) {
-		perror("ftell err");
-		exit(EXIT_FAILURE);
-	}
+	count = 0;
+	while ((c = fgetc(fptr)) != EOF)
+		if (c == '\n')
+			count++;
+	numlines = count;
 	rewind(fptr);
-	if ((buf = malloc(sizeof(char) * BUFLEN)) == NULL || (numarr = malloc(sizeof(int) * fsize)) == NULL) {
-	       perror("malloc err");
+	if ((buf = malloc(sizeof(char) * BUFLEN)) == NULL || (numarr = malloc(sizeof(int) * numlines)) == NULL) {
+		perror("malloc err");
 		exit(EXIT_FAILURE);
 	}		
 	count = 0;
 	while (fgets(buf, BUFLEN, fptr) != NULL) {
-		//printf("%d\t", atoi(buf));
 		*(numarr + count) = atoi(buf);
 		count++;
 	}
-	unsigned long res = 0;
+	res = 0;
 	int i;
-	for (i = 0; i < fsize; i++) {
+	for (i = 0; i < numlines; i++) {
 		res += *(numarr + i);
 	}
-	printf("king%d\n", i);
-	printf("%lu\n", res / fsize);
+	printf("%lu\n", res / numlines);
 	if (fclose(fptr) == -1) {
 		perror("fclose err");
 		exit(EXIT_FAILURE);
