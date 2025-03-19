@@ -3,6 +3,8 @@
 
 #define BUFLEN 50
 
+int compa(const void *a, const void *b);
+
 int main(int argc, char *argv[]) {
 
 	FILE *fptr;
@@ -32,12 +34,12 @@ int main(int argc, char *argv[]) {
 		*(numarr + count) = atoi(buf);
 		count++;
 	}
+	qsort(numarr, count, sizeof(int), compa);
 	res = 0;
 	int i;
-	for (i = 0; i < numlines; i++) {
+	for (i = 0; i < numlines; i++) 
 		res += *(numarr + i);
-	}
-	printf("%lu\n", res / numlines);
+	printf("Median is %lu\n1st Quartile is %lu\n2nd Quartile is %lu\n", *(numarr + ((numlines + 1) * 2/4)), *(numarr + ((numlines + 1) * 1/4)), *(numarr + ((numlines + 1) * 3/4)));
 	if (fclose(fptr) == -1) {
 		perror("fclose err");
 		exit(EXIT_FAILURE);
@@ -45,5 +47,11 @@ int main(int argc, char *argv[]) {
 	free(buf);
 	free(numarr);
 	return 0;
+
+}
+
+int compa(const void *a, const void *b) {
+
+	return *((int *) a) - *((int *) b);
 
 }
