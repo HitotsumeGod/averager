@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
 	unsigned long numlines, res;
 	int count, c, med;
 	float *numarr, q1, q2, q3;
-	char *buf;
+	char *buf, *dotline;
 	if (argc != 2) {
 		printf("%s\n", "Improper format. Please launch the applicaton with a single argument (the filename of the file to be read from). Example : \"averager.exe myfile.txt\".");
 		exit(EXIT_FAILURE);
@@ -52,12 +52,13 @@ int main(int argc, char *argv[]) {
 			q3 = *(numarr + ((((med + 1) / 2) + med) - 1));
 		}
 	} else {
-		printf("%s\n", "This program only accepts datasets of even length right now (total number of numbers must be cleanly divisible by 2)! Please remove a SINGLE item from the dataset and try it again.");
-		free(buf);
-		free(numarr);
-		exit(EXIT_FAILURE);
+		++med;
+		q1 = *(numarr + (med / 2) - 1);
+		q2 = *(numarr + (med - 1));
+		q3 = *(numarr + (med + (med / 2) - 1));
 	}
-	printf("1st Quartile is : %.2f\nMedian is : %.2f\n3rd Quartile is : %.2f\n", q1, q2, q3);
+	dotline = "-------------------------------";
+	printf("%s\n1st Quartile is : %.2f\nMedian is : %.2f\n3rd Quartile is : %.2f\nInterquartile Range is : %.2f\n%s\n", dotline, q1, q2, q3, q3 - q1, dotline);
 	if (fclose(fptr) == -1) {
 		printf("%s\n", "File close error. Report to Peter immediately.");
 		exit(EXIT_FAILURE);
