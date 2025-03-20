@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define BUFLEN 50
 
@@ -10,13 +11,23 @@ int main(int argc, char *argv[]) {
 	FILE *fptr;
 	unsigned long numlines, res;
 	int count, c, med;
+	size_t fname_size;
 	float *numarr, q1, q2, q3;
-	char *buf, *dotline;
+	char *buf, *dotline, *fname, *prefix;
 	if (argc != 2) {
 		printf("%s\n", "Improper format. Please launch the applicaton with a single argument (the filename of the file to be read from). Example : \"averager.exe myfile.txt\".");
 		exit(EXIT_FAILURE);
 	}
-	if ((fptr = fopen(argv[1], "r")) == NULL) {
+	prefix = "src/res/";
+	if ((fname = malloc(sizeof(char) * ((fname_size = strlen(argv[1]) + strlen(prefix) + 1)))) == NULL) {
+		printf("%s\n", "Memory allocation error. Immediately report to Peter.");
+		exit(EXIT_FAILURE);
+	}
+	if (snprintf(fname, fname_size, "%s%s%c", prefix, argv[1], '\0') == -1) {
+		printf("%s\n", "String formatting error. Immediately report to Peter.");
+		exit(EXIT_FAILURE);
+	}
+	if ((fptr = fopen(fname, "r")) == NULL) {
 		printf("%s\n", "File not found. Please provide the file in the same directory as this program and then provide the filename.");
 		exit(EXIT_FAILURE);
 	}
@@ -63,6 +74,7 @@ int main(int argc, char *argv[]) {
 		printf("%s\n", "File close error. Report to Peter immediately.");
 		exit(EXIT_FAILURE);
 	}
+	free(fname);
 	free(buf);
 	free(numarr);
 	return 0;
