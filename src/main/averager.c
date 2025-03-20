@@ -10,8 +10,8 @@ int compa(const void *a, const void *b);
 int main(int argc, char *argv[]) {
 
 	FILE *fptr;
-	unsigned long numlines, res;
-	int count, c;
+	unsigned long numlines, res, count;
+	int c, i;
 	size_t fname_size;
 	double *numarr, *quarts;
 	char *buf, *dotline, *fname, *prefix;
@@ -37,6 +37,7 @@ int main(int argc, char *argv[]) {
 		if (c == '\n')
 			count++;
 	numlines = count;
+	printf("%lu\n", numlines);
 	rewind(fptr);
 	if ((buf = malloc(sizeof(char) * BUFLEN)) == NULL || (numarr = malloc(sizeof(int) * numlines)) == NULL) {
 		printf("%s\n", "Memory allocation error. Immediately report to Peter.");
@@ -47,14 +48,13 @@ int main(int argc, char *argv[]) {
 		*(numarr + count) = atof(buf);
 		count++;
 	}
-	qsort(numarr, count, sizeof(float), compa);
+	qsort(numarr, count, sizeof(double), compa);
 	res = 0;
-	int i;
 	for (i = 0; i < numlines; i++) 
 		res += *(numarr + i);
 	quarts = findquartiles(numarr, numlines);
 	dotline = "-------------------------------";
-	printf("%s\n1st Quartile is : %.2f\nMedian is : %.2f\n3rd Quartile is : %.2f\nInterquartile Range is : %.2f\n%s\n", dotline, quarts[0], quarts[1], quarts[2], quarts[0] - quarts[2], dotline);
+	printf("%s\n1st Quartile is : %.2f\nMedian is : %.2f\n3rd Quartile is : %.2f\nInterquartile Range is : %.2f\n%s\n", dotline, quarts[0], quarts[1], quarts[2], quarts[2] - quarts[0], dotline);
 	if (fclose(fptr) == -1) {
 		printf("%s\n", "File close error. Report to Peter immediately.");
 		exit(EXIT_FAILURE);
