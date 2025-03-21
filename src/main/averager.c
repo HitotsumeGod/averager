@@ -10,8 +10,8 @@ int compa(const void *a, const void *b);
 int main(int argc, char *argv[]) {
 
         FILE *fptr;
-        unsigned long numlines, res;
-        int count, c, i;
+        unsigned long numlines, res, count;
+        int c, i;
         size_t fname_size;
         double *numarr, *quarts;
         char *buf, *dotline, *fname, *prefix;
@@ -38,17 +38,16 @@ int main(int argc, char *argv[]) {
                         count++;
         numlines = count;
         rewind(fptr);
-        if ((buf = malloc(sizeof(char) * BUFLEN)) == NULL || (numarr = malloc(sizeof(int) * numlines)) == NULL) {
+        if ((buf = malloc(sizeof(char) * BUFLEN)) == NULL || (numarr = malloc(sizeof(double) * numlines)) == NULL) {
                 printf("%s\n", "Memory allocation error. Immediately report to Peter.");
                 exit(EXIT_FAILURE);
         }
-        count = 0;
+        count = res = 0;
         while (fgets(buf, BUFLEN, fptr) != NULL) {
                 *(numarr + count) = atof(buf);
                 count++;
         }
         qsort(numarr, count, sizeof(double), compa);
-        res = 0;
         for (i = 0; i < numlines; i++) 
                 res += *(numarr + i);
         quarts = findquartiles(numarr, numlines);
